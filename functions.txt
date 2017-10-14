@@ -1,0 +1,5 @@
+int sign(int y)
+    {
+        int sign =(y>0) - (y<0);
+        return sign;
+    }
