@@ -3,3 +3,33 @@ int sign(int y)
         int sign =(y>0) - (y<0);
         return sign;
     }
+class perceptron_hash_entry
+{
+private:
+    int key;
+    int value[];
+public:
+    hash_entry( key, int value)
+    {
+        this->key = key;
+        this->value = value;
+    }
+    int get_key()
+    {
+        return key;
+    }
+    int get_value()
+    {
+        return value;
+    }
+};
+
+class hash_table
+{
+    private:
+    hash_entry **table;
+    float hash_function(float key)
+    {
+     return key;    
+    }
+};
