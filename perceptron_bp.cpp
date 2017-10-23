@@ -197,3 +197,11 @@ int main(){
     
     return 0;
 }
+
+unsigned int hash(unsigned int address,unsigned int value)
+{
+    unsigned int result;
+    result = (1/2)*(address + value)*(address + value + 1) + value;
+    return result;
+}
+
