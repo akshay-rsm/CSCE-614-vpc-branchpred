@@ -1,9 +1,7 @@
-/***my_predictor.h*****/
-
 #include <map>
 #include <assert.h>
 #include <cmath>
-#define PERCEPTRON_SIZE 20  //size of each perceptron. This is the number of weights within each perceptron
+#define PERCEPTRON_SIZE 30  //size of each perceptron. This is the number of weights within each perceptron
 using namespace std;
 
 int sign(int y) //function to find the sign of an integer. Returns 1 or -1 based on sign
@@ -203,7 +201,7 @@ class perceptron_predictor //the predictor class
 {
     public:
     perceptron_table* p_table; // perceptron table
-    static const int theta=40; // learning threshold
+    static const int theta=12; // learning threshold
     unsigned int size_of_table; //the number of perceptrons
     perceptron_predictor(unsigned int size)
     {
@@ -245,7 +243,7 @@ class perceptron_predictor //the predictor class
     void update_bias(perceptron_node* p_node,int taken)
     {
     	int new_bias = p_node->bias + taken;
-    	if(new_bias < 7 && new_bias > 0 )  //each weight is a saturating three-bit counter
+    	if(new_bias < 32 && new_bias > 0 )  //each weight is a saturating three-bit counter
     	{
        		p_node->bias = new_bias;
     	}
@@ -256,7 +254,7 @@ class perceptron_predictor //the predictor class
     	for(int i=0;i<PERCEPTRON_SIZE;i++)
     	{
         	new_weight = p_node->perceptron[i] + (taken * get_history_bit(vghr, i)); 
-        	if(new_weight < 7 && new_weight > 0)
+        	if(new_weight < 32 && new_weight > 0)
         	{
             		p_node->perceptron[i] = new_weight;
         	}
@@ -416,9 +414,9 @@ public:
 class my_predictor : public branch_predictor 
 {
 public:
-#define HISTORY_LENGTH	20 //how far back into history are we looking?
-#define NO_OF_PERCEPTRONS 1024 //the number of perceptrons
-#define SIZE_OF_BTB 1024 //size of the BTB
+#define HISTORY_LENGTH	30  //how far back into history are we looking?
+#define NO_OF_PERCEPTRONS 2048 //the number of perceptrons
+#define SIZE_OF_BTB 2048 //size of the BTB
 #define MAX_ITER 8  //the number of iterations of VPC
 	my_update u;
 	branch_info bi;
@@ -539,11 +537,11 @@ public:
 				}while((i<=MAX_ITER-1) && (!found_target));
 				if(!found_target)    				//if target is still not found
 				{
-					//int take = taken? 1:-1;							
+					int take = taken? 1:-1;							
 					unsigned int vpca = bi.address;
 					unsigned int vghr = ghr;
 					btb_1->put(vpca,target);
-					p_pred->update(vpca,0,+1,vghr);
+					p_pred->update(vpca,0,take,vghr);
 				}
 			
 			}
