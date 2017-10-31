@@ -1,7 +1,7 @@
 #include <map>
 #include <assert.h>
 #include <cmath>
-#define PERCEPTRON_SIZE 30  //size of each perceptron. This is the number of weights within each perceptron
+#define PERCEPTRON_SIZE 28  //size of each perceptron. This is the number of weights within each perceptron
 using namespace std;
 
 int sign(int y) //function to find the sign of an integer. Returns 1 or -1 based on sign
@@ -201,7 +201,7 @@ class perceptron_predictor //the predictor class
 {
     public:
     perceptron_table* p_table; // perceptron table
-    static const int theta=12; // learning threshold
+    static const int theta=24; // learning threshold
     unsigned int size_of_table; //the number of perceptrons
     perceptron_predictor(unsigned int size)
     {
@@ -243,7 +243,7 @@ class perceptron_predictor //the predictor class
     void update_bias(perceptron_node* p_node,int taken)
     {
     	int new_bias = p_node->bias + taken;
-    	if(new_bias < 32 && new_bias > 0 )  //each weight is a saturating three-bit counter
+    	if(abs(new_bias) < 128 )  //each weight is a saturating three-bit counter
     	{
        		p_node->bias = new_bias;
     	}
@@ -254,7 +254,7 @@ class perceptron_predictor //the predictor class
     	for(int i=0;i<PERCEPTRON_SIZE;i++)
     	{
         	new_weight = p_node->perceptron[i] + (taken * get_history_bit(vghr, i)); 
-        	if(new_weight < 32 && new_weight > 0)
+        	if(abs(new_weight) < 128)
         	{
             		p_node->perceptron[i] = new_weight;
         	}
@@ -414,10 +414,10 @@ public:
 class my_predictor : public branch_predictor 
 {
 public:
-#define HISTORY_LENGTH	30  //how far back into history are we looking?
+#define HISTORY_LENGTH	28  //how far back into history are we looking?
 #define NO_OF_PERCEPTRONS 2048 //the number of perceptrons
 #define SIZE_OF_BTB 2048 //size of the BTB
-#define MAX_ITER 8  //the number of iterations of VPC
+#define MAX_ITER 6  //the number of iterations of VPC
 	my_update u;
 	branch_info bi;
 	perceptron_predictor* p_pred; //predictor object
@@ -427,8 +427,8 @@ public:
 	int result_of_perceptron[MAX_ITER];
 	unsigned int pred_target; //the predicted target of BTB
 	int pred_iter; // the iteration at which prediction is made
-	
-	my_predictor (void) : ghr(0),hashvals {1392,4695,2615,5174,2648,2810,7302,5494}//,6865,3519,6155,3489,5263,6911,5501,2558}
+	int conditional_result;		
+	my_predictor (void) : ghr(0),hashvals {1392,4695,2615,5174,2648,2810}//,7302,5494}//,6865,3519,6155,3489,5263,6911,5501,2558}
 	{ 
 		p_pred = new perceptron_predictor(NO_OF_PERCEPTRONS);
 		btb_1 = new btb(SIZE_OF_BTB);
@@ -473,6 +473,7 @@ public:
 		}
 		if(b.br_flags & BR_CONDITIONAL)
 		{
+		//	conditional_result = p_pred->compute(b.address,ghr);
 			u.direction_prediction(true);
 		}
 		return &u;
@@ -527,7 +528,7 @@ public:
 						btb_1->put(vpca,target);
 						found_target = true;
 					}
-					else if(pred_target)
+					else if(pred_target != 0 )
 					{
 						p_pred->update(vpca,result_of_perceptron[i],-1,vghr); //this branch was not taken
 					}
@@ -548,6 +549,7 @@ public:
 		}
 		if(bi.br_flags & BR_CONDITIONAL)
 		{
+			//p_pred->update(bi.address,conditional_result,taken?1:-1,ghr);
 			ghr <<= 1; //shift history
 			ghr |= taken;
 			ghr &= (1<<HISTORY_LENGTH)-1;
