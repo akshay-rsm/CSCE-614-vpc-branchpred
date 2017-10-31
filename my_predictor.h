@@ -57,11 +57,11 @@ class perceptron_list //Doubly linked list to hold perceptrons
     
     public:
     
-    perceptron_node *front,*rear; //
+    perceptron_node *front,*rear; // The first and last nodes of the  linked list
     
-    perceptron_list(): front(NULL), rear(NULL){}
+    perceptron_list(): front(NULL), rear(NULL){} //Constructor
     
-    bool no_entries()
+    bool no_entries() //Check if there are no entries in the linked list
     {
         if(rear == NULL)
         {
@@ -71,45 +71,45 @@ class perceptron_list //Doubly linked list to hold perceptrons
     }
     
     
-    perceptron_node* add_to_head(unsigned int vpca)
+    perceptron_node* add_to_head(unsigned int vpca) //adds a perceptron node to the head of the linked list
     {
         
-        perceptron_node* page = new perceptron_node(vpca);
+        perceptron_node* node = new perceptron_node(vpca); //get a new node
         if(!front && !rear)
         {
-            front = rear = page;
+            front = rear = node; //if there are no entries in the linked list
         }
         else
         {
-            page->next = front;
-            page->prev = NULL;
-            front->prev = page;
-            front = page;
+            node->next = front;
+            node->prev = NULL;
+            front->prev = node;
+            front = node;
         }
-        return page;
+        return node;
     }
     
-    void move_page_to_head(perceptron_node* page)
+    void move_node_to_head(perceptron_node* node) 
     {
-        if(page==front)
+        if(node==front)
         {
             return;
         }
-        if(page==rear)
+        if(node==rear)
         {
             rear = rear->prev;
             rear->next = NULL;
         }
         else
         {
-            page->prev->next = page->next;
-            page->next->prev = page->prev;
+            node->prev->next = node->next;
+            node->next->prev = node->prev;
         }
     
-        page->next = front;
-        page->prev = NULL;
-        front->prev = page;
-        front = page;
+        node->next = front;
+        node->prev = NULL;
+        front->prev = node;
+        front = node;
     }
     
     void remove_rear()
@@ -162,7 +162,7 @@ class perceptron_table
             return NULL;
         }
         //unsigned int* p_vector = p_map[vpca]->perceptron;
-        p_list->move_page_to_head(p_map[vpca]);
+        p_list->move_node_to_head(p_map[vpca]);
         return p_map[vpca];
     }
     
@@ -188,7 +188,7 @@ class perceptron_table
             {
                 p_map[vpca]->perceptron[i]=vec[i];
             }
-            p_list->move_page_to_head(p_map[vpca]);
+            p_list->move_node_to_head(p_map[vpca]);
             return;
         }
         else{
@@ -294,42 +294,42 @@ class btb_list
     btb_node* add_to_head(unsigned int vpca, unsigned int address)
     {
         
-        btb_node* page = new btb_node(vpca,address);
+        btb_node* node = new btb_node(vpca,address);
         if(!front && !rear)
         {
-            front = rear = page;
+            front = rear = node;
         }
         else
         {
-            page->next = front;
-            page->prev = NULL;
-            front->prev = page;
-            front = page;
+            node->next = front;
+            node->prev = NULL;
+            front->prev = node;
+            front = node;
         }
-        return page;
+        return node;
     }
     
-    void move_page_to_head(btb_node* page)
+    void move_node_to_head(btb_node* node)
     {
-        if(page==front)
+        if(node==front)
         {
             return;
         }
-        if(page==rear)
+        if(node==rear)
         {
             rear = rear->prev;
             rear->next = NULL;
         }
         else
         {
-            page->prev->next = page->next;
-            page->next->prev = page->prev;
+            node->prev->next = node->next;
+            node->next->prev = node->prev;
         }
     
-        page->next = front;
-        page->prev = NULL;
-        front->prev = page;
-        front = page;
+        node->next = front;
+        node->prev = NULL;
+        front->prev = node;
+        front = node;
     }
     
     void remove_rear()
@@ -379,10 +379,10 @@ class btb
     unsigned int get(unsigned int vpca)
     {
         if(b_map.find(vpca) == b_map.end()){
-            return -1;
+            return 0;
         }
         //unsigned int* p_vector = p_map[vpca]->perceptron;
-        b_list->move_page_to_head(b_map[vpca]);
+        b_list->move_node_to_head(b_map[vpca]);
         return b_map[vpca]->target;
     }
     
@@ -391,7 +391,7 @@ class btb
         if(b_map.find(vpca) != b_map.end())
         {
             b_map[vpca]->target = address;
-            b_list->move_page_to_head(b_map[vpca]);
+            b_list->move_node_to_head(b_map[vpca]);
             return;
         }
         if(size == capacity)
