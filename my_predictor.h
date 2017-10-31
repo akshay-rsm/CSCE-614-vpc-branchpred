@@ -473,7 +473,6 @@ public:
 		}
 		if(b.br_flags & BR_CONDITIONAL)
 		{
-		//	conditional_result = p_pred->compute(b.address,ghr);
 			u.direction_prediction(true);
 		}
 		return &u;
@@ -549,7 +548,7 @@ public:
 		}
 		if(bi.br_flags & BR_CONDITIONAL)
 		{
-			//p_pred->update(bi.address,conditional_result,taken?1:-1,ghr);
+			
 			ghr <<= 1; //shift history
 			ghr |= taken;
 			ghr &= (1<<HISTORY_LENGTH)-1;
