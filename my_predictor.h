@@ -89,7 +89,7 @@ class perceptron_list //Doubly linked list to hold perceptrons
         return node;
     }
     
-    void move_node_to_head(perceptron_node* node) 
+    void move_node_to_head(perceptron_node* node) //a key operation required for implementing an LRU policy 
     {
         if(node==front)
         {
@@ -112,7 +112,7 @@ class perceptron_list //Doubly linked list to hold perceptrons
         front = node;
     }
     
-    void remove_rear()
+    void remove_rear() //remove the last node
     {
         if(no_entries())
         {
@@ -141,12 +141,12 @@ class perceptron_list //Doubly linked list to hold perceptrons
         return front;
     }
 };
-class perceptron_table
+class perceptron_table //the map which keeps track of the various nodes and their mapping to various branch addresses
 {
     public:
-    unsigned  size, capacity;
-    perceptron_list *p_list;
-    std::map<unsigned int,perceptron_node*> p_map;
+    unsigned  size, capacity; //current size and maximum capacity
+    perceptron_list *p_list; //pointer to linked list  of perceptron nodes
+    std::map<unsigned int,perceptron_node*> p_map; // unordered map to keep track of addresse and perceptron nodes 
     
     perceptron_table(unsigned int cap)
     {
@@ -161,7 +161,7 @@ class perceptron_table
         if(p_map.find(vpca) == p_map.end()){
             return NULL;
         }
-        //unsigned int* p_vector = p_map[vpca]->perceptron;
+        
         p_list->move_node_to_head(p_map[vpca]);
         return p_map[vpca];
     }
